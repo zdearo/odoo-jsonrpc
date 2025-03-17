@@ -52,6 +52,33 @@ class Client
         };
     }
 
+    public function authenticate($db, $login, $password)
+    {
+        try {
+            $response = $this->client->request('POST', 'web/session/authenticate', [
+                'json' => [
+                    'jsonrpc' => '2.0',
+                    'method' => 'call',
+                    'params' => [
+                        'db' => $db,
+                        'login' => $login,
+                        'password' => $password,
+                    ],
+                    'id' => rand(0, 1000000000)
+                ]
+            ]);
+        } catch (GuzzleException $e) {
+            throw new OdooException(null, $e->getMessage(), $e->getCode(), $e);
+        }
+
+        $this->lastResponse = $response;
+
+        return match($response->getStatusCode()) {
+            200 => $this->makeResponse($response),
+            default => throw new OdooException($response)
+        };
+    }
+
     public function lastResponse(): ?ResponseInterface
     {
         return $this->lastResponse;

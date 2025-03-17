@@ -19,9 +19,9 @@ class CommonEndpoint extends Endpoint
             ->authenticate(
                 $this->getConfig()->getDatabase(),
                 $this->getConfig()->getUsername(),
-                $this->getConfig()->getPassword(),
-                ['empty' => 'false']
-            );
+                $this->getConfig()->getPassword()
+            )->uid;
+
         if ($uid > 0) {
             return $uid;
         }
